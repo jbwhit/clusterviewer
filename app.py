@@ -66,6 +66,13 @@ css = """
     text-align: center;
     margin-bottom: 5px;
 }
+.cluster-bg-3 {
+    background-color: #FFFFFF;
+    padding: 5px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 5px;
+}
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
@@ -77,6 +84,11 @@ image_count = 0
 cluster_count = 0
 cols = st.columns(n_images_per_row)
 
+# white separator
+img_path = f"img/image_white.png"
+img = Image.open(img_path)
+img_white = get_image_base64(img)
+
 for index, row in data.iterrows():
     if cluster_filter != "All" and row["assigned_cluster_id"] != cluster_filter:
         continue
@@ -87,7 +99,13 @@ for index, row in data.iterrows():
             # Add the white separator image only if the previous cluster didn't fill the row
             if image_count % n_images_per_row != 0 and image_count != 0:
                 col = cols[image_count % n_images_per_row]
-                col.image("img/image_white.png", width=10, caption="")
+                # col.image("img/image_white.png", width=fixed_image_width, caption="")
+                col.markdown(
+                f'<div class="cluster-bg-3" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: {fixed_image_width}px; margin-right: 10px;">'
+                f'<img src="data:image/png;base64,{img_white}" style="width:{fixed_image_width}px;">'
+                f'<p style="word-wrap: break-word;"><br><br></p></div>',
+                unsafe_allow_html=True,
+            )
                 image_count += 1
 
         # Reset for the new cluster

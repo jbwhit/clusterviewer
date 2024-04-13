@@ -67,6 +67,16 @@ data = update_data_post_merge(data)  # Calculate averages and update data
 
 # Streamlit sidebar controls for the app
 st.title("Image Cluster Viewer")
+
+# Download functionality
+if st.sidebar.button("Download Data as CSV"):
+    filename = st.sidebar.text_input("Enter filename for CSV", value="cluster_data.csv")
+    if filename:
+        csv_data = convert_df_to_csv(data)
+        st.sidebar.download_button(label="Download CSV", data=csv_data, file_name=filename, mime='text/csv')
+
+
+
 n_images_per_row = st.sidebar.slider("Images per Row", min_value=1, max_value=15, value=7)
 display_area_width = st.sidebar.slider("Display Area Width", min_value=50, max_value=100, value=80, step=5)
 fixed_image_width = st.sidebar.slider("Fixed Image Width", min_value=100, max_value=300, value=140)
@@ -82,6 +92,7 @@ else:
 # Checkboxes for cluster selection
 cluster_ids = data['manual_id'].unique()
 selected_clusters = {cid: st.sidebar.checkbox(f"Cluster {cid}", value=False, key=f"cluster_checkbox_{cid}") for cid in cluster_ids}
+
 
 # Merge button with confirmation
 if st.sidebar.button("Merge Selected Clusters"):
@@ -105,18 +116,12 @@ if st.sidebar.button("Merge Selected Clusters"):
     else:
         st.sidebar.error("No clusters selected for merging")
 
+
 # # Unselect all clusters functionality
 # if st.sidebar.button("Unselect All Clusters"):
 #     for key in selected_clusters:
 #         selected_clusters[key] = False
 #     st.experimental_rerun()
-
-# Download functionality
-if st.sidebar.button("Download Data as CSV"):
-    filename = st.sidebar.text_input("Enter filename for CSV", value="cluster_data.csv")
-    if filename:
-        csv_data = convert_df_to_csv(data)
-        st.sidebar.download_button(label="Download CSV", data=csv_data, file_name=filename, mime='text/csv')
 
         
 # Load CSS styles
